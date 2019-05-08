@@ -1,26 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
-  compileSdkVersion COMPILE_SDK_VERSION as int
-  buildToolsVersion BUILD_TOOLS_VERSION
+  compileSdkVersion 28
 
   defaultConfig {
-    minSdkVersion MIN_SDK_VERSION as int
-    targetSdkVersion TARGET_SDK_VERSION as int
-    versionCode VERSION_CODE as int
-    versionName VERSION_NAME
+    minSdkVersion 16
+    targetSdkVersion 28
+    versionCode 1
+    versionName versionCode.toString()
   }
-}
-
-publish {
-  userOrg = POM_DEVELOPER_ID
-  groupId = GROUP
-  artifactId = ARTIFACT_ID
-  publishVersion = VERSION_NAME
-  desc = POM_DESCRIPTION
-  website = POM_URL
-  bintrayUser = BINTRAY_USER
-  bintrayKey = BINTRAY_API_KEY
-  autoPublish = false
 }

@@ -49,6 +49,10 @@ class Metronome implements Choreographer.FrameCallback {
     listeners.add(l);
   }
 
+  public void removeListener(Audience l) {
+    listeners.remove(l);
+  }
+
   public void setInterval(int interval) {
     this.interval = interval;
   }

@@ -1,16 +1,13 @@
 package jp.wasabeef.takt;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,13 +51,10 @@ public class Takt  {
 
   public static class Program implements LifecycleListener.LifecycleCallbackListener {
     private Metronome metronome;
-    private boolean show = true;
     private boolean isPlaying = false;
-    private boolean showSetting = true;
     private boolean customControl = false;
 
     private Application app;
-    private WindowManager wm;
     private View stageView;
     private TextView fpsText;
     private LayoutParams params;
@@ -89,12 +83,11 @@ public class Takt  {
       params.x = 10;
 
       app = application;
-      wm = WindowManager.class.cast(application.getSystemService(Context.WINDOW_SERVICE));
       LayoutInflater inflater = LayoutInflater.from(app);
       stageView = inflater.inflate(R.layout.stage, new RelativeLayout(app));
       fpsText = stageView.findViewById(R.id.takt_fps);
 
-      listener(new Audience() {
+      addListener(new Audience() {
         @Override public void heartbeat(double fps) {
           if (fpsText != null) {
             fpsText.setText(decimal.format(fps));
@@ -116,19 +109,9 @@ public class Takt  {
     }
 
     public void play() {
-      if (!hasOverlayPermission()) {
-        if (showSetting) {
-          startOverlaySettingActivity();
-        } else {
-          Log.w("takt", "Application has no Overlay permission");
-        }
-        return;
-      }
-
       metronome.start();
 
-      if (show && !isPlaying) {
-        wm.addView(stageView, params);
+      if (!isPlaying) {
         isPlaying = true;
       }
     }
@@ -136,10 +119,7 @@ public class Takt  {
     public void stop() {
       metronome.stop();
 
-      if (show && stageView != null) {
-        wm.removeView(stageView);
-        isPlaying = false;
-      }
+      isPlaying = false;
     }
 
     public Program color(int color) {
@@ -170,23 +150,13 @@ public class Takt  {
       return this;
     }
 
-    public Program listener(Audience audience) {
+    public Program addListener(Audience audience) {
       metronome.addListener(audience);
       return this;
     }
 
-    public Program hide() {
-      show = false;
-      return this;
-    }
-
-    public Program seat(Seat seat) {
-      params.gravity = seat.getGravity();
-      return this;
-    }
-
-    public Program showOverlaySetting(boolean enable) {
-      showSetting = enable;
+    public Program removeListener(Audience audience) {
+      metronome.removeListener(audience);
       return this;
     }
 
